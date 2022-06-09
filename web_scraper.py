@@ -1,16 +1,22 @@
+import csv
+
 from bs4 import BeautifulSoup
 import requests
 
 url = "https://topstartups.io/?hq_location=US&industries=Biotechnology&industries=Health&funding_round=Seed&funding_round=Series+A&funding_round=Series+B&funding_round=Series+C&funding_round=Series+D"
-page = requests.get(url)
+# page = requests.get(url)
 
 rows = []
 
-soup = BeautifulSoup(page.content, "html.parser")
+with open("input/topstartups.html") as fp:
+    soup = BeautifulSoup(fp, 'html.parser')
+
+# soup = BeautifulSoup(page.content, "html.parser")
 cards = soup.find_all("div", id="item-card")
 for card in cards:
-    title = card.find("a", id="startup-website-link")
+    title = card.find_all("a", id="startup-website-link")[1]
     name = title.text
+    print(name)
     website = title['href'].split("?")[0]
     what_they_do = card.find_all("p")[0]
     quick_facts = card.find_all("p")[1]
@@ -56,4 +62,10 @@ for card in cards:
     }
     rows.append(row)
 
-print(rows[:1])
+
+with open('output/topstartups.csv', 'w', newline='') as file:
+    fieldnames = rows[0].keys()
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+    writer.writeheader()
+    writer.writerows(rows)
