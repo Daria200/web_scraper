@@ -33,15 +33,26 @@ for card in cards:
         address = sibling.text.split("\n")[0].strip('📍HQ: ')
         break
 
+    company_size_tags_html = quick_facts.find_all("span", id="company-size-tags")
+
+    employees = company_size_tags_html[0].text
+    founded = company_size_tags_html[1].text.replace("Founded: ", "")
+
+    funding_tags = []
+    funding_tags_html = funding.find_all("span", id="funding-tags")
+    for tag_html in funding_tags_html:
+        funding_tags.append(tag_html.text.strip())
+    funding_tags_text = ", ".join(funding_tags)
+
     row = {
         "Name": name,
         "Website": website,
         "What they do": what_they_do_text,
         "What they do (tags)": what_they_do_tags_text,
         "HQ": address,
-        "Employees": None,
-        "Founded": None,
-        "Funding (tags)": None,
+        "Employees": employees,
+        "Founded": founded,
+        "Funding (tags)": funding_tags_text,
     }
     rows.append(row)
 
