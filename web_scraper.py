@@ -56,7 +56,7 @@ for card in cards:
         "What they do": what_they_do_text,
         "What they do (tags)": what_they_do_tags_text,
         "HQ": address,
-        "Employees": employees,
+        "Employees": employees.strip(" employees"),
         "Founded": founded,
         "Funding (tags)": funding_tags_text,
     }
