@@ -1,5 +1,6 @@
 import csv
 import re
+from unicodedata import name
 
 from bs4 import BeautifulSoup
 import requests
@@ -18,31 +19,46 @@ def  write_rows(input):
         soup = BeautifulSoup(fp, 'html.parser')
     companies = soup.find_all("div", class_="css-1wxyl2")
     for company in companies:
-        name = company.find_all("a", class_="TopicLink__link legacyLink")[0].text
-        description = company.find("p", class_="Editor__text").text
+        cells = company.find_all("div", class_="css-1pnx597")
+
+        name_cell = cells[1]
+        desc_cell = cells[2]
+        industry_cell = cells[3]
+        website_cell = cells[4]
+        location_cell = cells[5]
+
+        name = name_cell.find_all("a", class_="TopicLink__link legacyLink")[0].text
+
+        description = desc_cell.find("p", class_="Editor__text").text
+
         industry_tags=[]
-        industry_tags_html = company.find_all("a", class_="TopicLink__link legacyLink")
-        industry_tags+=[industry_tags_html[1].text,industry_tags_html[2].text,industry_tags_html[3].text]
+        industry_tags_html = industry_cell.find_all("a", class_="TopicLink__link legacyLink")
+        for industry_tag_html in industry_tags_html:
+            industry_tags.append(industry_tag_html.text)
         industry_tags_text = ", ".join(industry_tags)
-        websites_html = company.find_all("div", class_="css-gm7gpm")[3].text
-        websites_split = re.split(r'https://|http://',websites_html)
-        for website in websites_split:
+
+        websites = []
+        websites_html = website_cell.find_all("a", class_="css-s8dpi2")
+        for website in websites_html:
             if website=='':
-                websites_split.remove(website)
-        websites = ", ".join(websites_split)
-        location = company.find_all("div", class_="css-gm7gpm")[4].text
+                continue
+            websites.append(website.text)
+        websites_text = ", ".join(websites)
+
+        # location = company.find_all("div", class_="css-gm7gpm")[4].text
+
         row = {
             "Name": name,
-            "Website": websites,
             "Description":description,
-            "Industry_tags":industry_tags_text,
-            "Location": location
+            "Industry (tags)":industry_tags_text,
+            "Website": websites_text,
+            # "Location": location
         }
         rows.append(row)
     return rows
 
-rows=write_rows(input_1)+write_rows(input_2)
-# rows=write_rows(input_1)
+# rows=write_rows(input_1)+write_rows(input_2)
+rows=write_rows(input_1)
 with open('output/golden.csv', 'w', newline='') as file:
     fieldnames = rows[0].keys()
     writer = csv.DictWriter(file, fieldnames=fieldnames)
