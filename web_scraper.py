@@ -10,6 +10,8 @@ soup = BeautifulSoup(page.content, "html.parser")
 cards = soup.find_all("div", id="item-card")
 for card in cards:
     title = card.find("a", id="startup-website-link")
+    name = title.text
+    website = title['href'].split("?")[0]
     what_they_do = card.find_all("p")[0]
     quick_facts = card.find_all("p")[1]
     funding = card.find_all("p")[2]
@@ -24,33 +26,23 @@ for card in cards:
     for tag_html in what_they_do_tags_html:
         what_they_do_tags.append(tag_html.text.strip())
     what_they_do_tags_text = ", ".join(what_they_do_tags)
-    print(what_they_do_tags_text)
-    break
-    print(quick_facts)
-    print("".join(quick_facts.find("br").next_siblings))
-    # What they do, Address Quick facts, Funding, Company_size, Founded
-    description = []
-    paras = card.find_all("p")
-    for i, p in enumerate(paras):
-        # description.append(p)
-        if i == 0:
-            pass
-        elif i == 1:
-            pass
-        elif i == 2:
-            pass
-        else:
-            break
+    
+    
+    address = None
+    for sibling in quick_facts.find("br").next_siblings:
+        address = sibling.text.split("\n")[0].strip('📍HQ: ')
+        break
 
     row = {
-        "Name": None,
-        "What they do": None,
-        "What they do (tags)": None,
-        "HQ": None,
+        "Name": name,
+        "Website": website,
+        "What they do": what_they_do_text,
+        "What they do (tags)": what_they_do_tags_text,
+        "HQ": address,
         "Employees": None,
         "Founded": None,
         "Funding (tags)": None,
     }
     rows.append(row)
 
-# print(rows[:1])
+print(rows[:1])
