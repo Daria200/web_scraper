@@ -14,6 +14,18 @@ for card in cards:
     quick_facts = card.find_all("p")[1]
     funding = card.find_all("p")[2]
 
+    what_they_do_text = None
+    for sibling in what_they_do.find("br").next_siblings:
+        what_they_do_text = sibling.text.split("\n")[0]
+        break
+    
+    what_they_do_tags = []
+    what_they_do_tags_html = what_they_do.find_all("span", id="industry-tags")
+    for tag_html in what_they_do_tags_html:
+        what_they_do_tags.append(tag_html.text.strip())
+    what_they_do_tags_text = ", ".join(what_they_do_tags)
+    print(what_they_do_tags_text)
+    break
     print(quick_facts)
     print("".join(quick_facts.find("br").next_siblings))
     # What they do, Address Quick facts, Funding, Company_size, Founded
@@ -37,8 +49,8 @@ for card in cards:
         "HQ": None,
         "Employees": None,
         "Founded": None,
-        "Funding (tags)": None
+        "Funding (tags)": None,
     }
     rows.append(row)
 
-print(rows[:1])
+# print(rows[:1])
