@@ -30,6 +30,8 @@ for card in cards:
     what_they_do_tags = []
     what_they_do_tags_html = what_they_do.find_all("span", id="industry-tags")
     for tag_html in what_they_do_tags_html:
+        if tag_html.text.strip()== '':
+            continue
         what_they_do_tags.append(tag_html.text.strip())
     what_they_do_tags_text = ", ".join(what_they_do_tags)
     
