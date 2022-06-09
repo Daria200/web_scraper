@@ -11,6 +11,9 @@ import requests
 input_1="input/golden_1.html"
 input_2="input/golden_2.html"
 input_3="input/golden_3.html"
+input_4="input/golden_4.html"
+input_5="input/golden_5.html"
+input_6="input/golden_6.html"
 
 def  write_rows(input):
     rows = []
@@ -45,20 +48,23 @@ def  write_rows(input):
             websites.append(website.text)
         websites_text = ", ".join(websites)
 
-        # location = company.find_all("div", class_="css-gm7gpm")[4].text
+        locations=[]
+        locations_html = location_cell.find_all("a",class_="TopicLink__link legacyLink")
+        for location in locations_html:
+            locations.append(location.text)
+        locations_text = ', '.join(locations)
 
         row = {
             "Name": name,
             "Description":description,
             "Industry (tags)":industry_tags_text,
             "Website": websites_text,
-            # "Location": location
+            "Location": locations_text
         }
         rows.append(row)
     return rows
 
-# rows=write_rows(input_1)+write_rows(input_2)
-rows=write_rows(input_1)
+rows=write_rows(input_1)+write_rows(input_2)+write_rows(input_3)+write_rows(input_4)+write_rows(input_5)+write_rows(input_6)
 with open('output/golden.csv', 'w', newline='') as file:
     fieldnames = rows[0].keys()
     writer = csv.DictWriter(file, fieldnames=fieldnames)
